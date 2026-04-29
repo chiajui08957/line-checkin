@@ -41,21 +41,21 @@ async function clock(type) {
     lng: pos.lng
   };
 
-fetch("https://script.google.com/macros/s/AKfycbzBC1Uh7niP8vXo-1m_WxK_UGzRLuKHX9KsxmI43-qL9FxAEYV50bioYE4T6rCQReBW4w/exec", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify(data)
-})
-.then(async r => {
-  const text = await r.text();
-  console.log(text);
-  return JSON.parse(text);
-})
-.then(res => alert(res.msg))
-.catch(err => alert("錯誤：" + err));
-}  
+  fetch("https://script.google.com/macros/s/AKfycbzBC1Uh7niP8vXo-1m_WxK_UGzRLuKHX9KsxmI43-qL9FxAEYV50bioYE4T6rCQReBW4w/exec", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(data)
+  })
+  .then(async r => {
+    const text = await r.text();
+    console.log("GAS回應:", text);
+    return JSON.parse(text);
+  })
+  .then(res => alert(res.msg))
+  .catch(err => alert("錯誤：" + err));
+}
 
 function getLocation() {
   return new Promise((resolve) => {
