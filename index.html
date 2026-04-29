@@ -41,14 +41,18 @@ async function clock(type) {
     lng: pos.lng
   };
 
-  fetch("https://script.google.com/macros/s/AKfycbzz-kDbRneutH4IQD3kgO8J2E3y_7hZ7woaKH9CoMB42VgQzcJLQzq-cfkPO1nDQ4Qbdg/exec", {
-    method: "POST",
+fetch("https://script.google.com/macros/s/AKfycbzBC1Uh7niP8vXo-1m_WxK_UGzRLuKHX9KsxmI43-qL9FxAEYV50bioYE4T6rCQReBW4w/exec", {
+  method: "POST",
   headers: {
     "Content-Type": "application/json"
   },
   body: JSON.stringify(data)
 })
-.then(r => r.json())
+.then(async r => {
+  const text = await r.text();
+  console.log(text);
+  return JSON.parse(text);
+})
 .then(res => alert(res.msg))
 .catch(err => alert("錯誤：" + err));
 }  
