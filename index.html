@@ -24,7 +24,7 @@ function clock(type) {
     
     const profile = await liff.getProfile();
 
-    fetch("你的GAS URL", {
+    fetch("https://script.google.com/macros/s/AKfycbw9GCt0risuNYPaGYsI4IcxXenx9Dk7uApluQj8y4-ie_uPmUXlPE9rtllEbAj1wG7f/exec", {
       method: "POST",
       body: JSON.stringify({
         userId: profile.userId,
