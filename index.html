@@ -2,8 +2,36 @@
 <html>
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>打卡系統</title>
+
 <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial;
+  text-align: center;
+  background: #f5f5f5;
+}
+
+/* 🔥 自適應按鈕 */
+button {
+  width: 80%;
+  max-width: 300px;
+  padding: 18px;
+  margin: 10px;
+  font-size: 18px;
+  border: none;
+  border-radius: 12px;
+  background: #00c300;
+  color: white;
+}
+
+button:active {
+  transform: scale(0.98);
+}
+</style>
 </head>
 
 <body>
@@ -15,22 +43,34 @@
 
 <script>
 
-let userId = "";
+let userId = "test";
 
 async function init() {
   await liff.init({ liffId: "2009933192-9PJMT56a" });
 
-  if (!liff.isLoggedIn()) {
+  if (liff.isLoggedIn()) {
+    try {
+      userId = liff.getContext().userId || "unknown";
+    } catch (e) {
+      userId = "web";
+    }
+  } else {
     liff.login();
-    return;
   }
-
-  userId = liff.getContext().userId;
 }
 
 async function clock(type) {
 
-  const pos = await getLocation();
+  alert("按鈕有反應：" + type);
+
+  let pos = { lat: 0, lng: 0 };
+
+  try {
+    pos = await getLocation();
+  } catch (e) {
+    console.log("GPS失敗，使用0");
+  }
+
   const profile = await liff.getProfile();
 
   const url = "https://script.google.com/macros/s/AKfycby6-NcxKw2Fl1dXGK38uE8wWACGqMCjYC0KJ-UuSiJRnHyL6H54xlmvN6ip96WQQjNPYg/exec";
@@ -48,7 +88,7 @@ async function clock(type) {
   })
   .then(r => r.json())
   .then(res => alert(res.msg))
-  .catch(err => alert("錯誤：" + err));
+  .catch(err => alert("GAS錯誤：" + err));
 }
 
 function getLocation() {
