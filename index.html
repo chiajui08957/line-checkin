@@ -33,29 +33,22 @@ async function clock(type) {
   const pos = await getLocation();
   const profile = await liff.getProfile();
 
-  const data = {
+  const url = "https://script.google.com/macros/s/AKfycby6-NcxKw2Fl1dXGK38uE8wWACGqMCjYC0KJ-UuSiJRnHyL6H54xlmvN6ip96WQQjNPYg/exec";
+
+  const params = new URLSearchParams({
     userId: userId,
     name: profile.displayName,
     type: type,
     lat: pos.lat,
     lng: pos.lng
-  };
+  });
 
-  fetch("https://script.google.com/macros/s/AKfycbx63X_CIK1pZ2-UE3J5tkQPQy_W2ndAwmJ4MhmvnN9n1M95RCpJ2GL8VVvJfCbFkyUvAA/exec", {
-const params = new URLSearchParams({
-  userId: userId,
-  name: profile.displayName,
-  type: type,
-  lat: pos.lat,
-  lng: pos.lng
-});
-
-fetch(url + "?" + params.toString(), {
-  method: "GET"
-})
-.then(r => r.json())
-.then(res => alert(res.msg))
-.catch(err => alert("錯誤：" + err));
+  fetch(url + "?" + params.toString(), {
+    method: "GET"
+  })
+  .then(r => r.json())
+  .then(res => alert(res.msg))
+  .catch(err => alert("錯誤：" + err));
 }
 
 function getLocation() {
