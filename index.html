@@ -43,12 +43,15 @@ async function clock(type) {
 
   fetch("https://script.google.com/macros/s/AKfycbxzqndus7dBGMHwYtfuyb1eJjdLLTL6cJMOAXhg9QJeFGlFUFSns5QFB8bukJnW7zsFpw/exec", {
     method: "POST",
-    body: new URLSearchParams(data)
-  })
-  .then(r => r.json())
-  .then(res => alert(res.msg))
-  .catch(err => alert("錯誤：" + err));
-}
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify(data)
+})
+.then(r => r.json())
+.then(res => alert(res.msg))
+.catch(err => alert("錯誤：" + err));
+}  
 
 function getLocation() {
   return new Promise((resolve) => {
