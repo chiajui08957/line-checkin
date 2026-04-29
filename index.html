@@ -13,7 +13,7 @@ async function checkIn(type) {
   await liff.init({ liffId: "2009933192-9PJMT56a" });
 
   navigator.geolocation.getCurrentPosition(function(pos) {
-    fetch("https://script.google.com/macros/s/AKfycbw83DKbKt2l_pZiyhvXI3t6Awa0httbuwMZuYnpfJc/dev", {
+    fetch("https://script.google.com/macros/s/AKfycbw83DKbKt2l_pZiyhvXI3t6Awa0httbuwMZuYnpfJc/exec", {
       method: "POST",
       body: JSON.stringify({
         type: type,
