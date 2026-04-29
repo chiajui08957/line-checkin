@@ -3,26 +3,26 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>打卡測試</title>
+<title>打卡系統</title>
 
 <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 
 <style>
 body {
+  margin: 0;
   font-family: Arial;
   text-align: center;
-  margin: 0;
-  padding: 20px;
+  background: #f5f5f5;
 }
 
 button {
-  width: 80%;
-  max-width: 300px;
-  padding: 16px;
-  margin: 10px;
+  width: 85%;
+  max-width: 320px;
+  padding: 18px;
+  margin: 12px;
   font-size: 18px;
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   background: #00c300;
   color: white;
 }
@@ -31,27 +31,81 @@ button {
 
 <body>
 
-<h2>打卡測試頁</h2>
+<h2>打卡系統</h2>
 
-<button onclick="testClick('上班')">上班</button>
-<button onclick="testClick('下班')">下班</button>
+<button onclick="clock('上班')">上班</button>
+<button onclick="clock('下班')">下班</button>
 
 <script>
 
-console.log("JS已載入");
+let userId = "web-user";
 
 async function init() {
   try {
     await liff.init({ liffId: "2009933192-9PJMT56a" });
-    console.log("LIFF OK");
+
+    if (liff.isLoggedIn()) {
+      try {
+        userId = liff.getContext()?.userId || "liff-user";
+      } catch (e) {
+        userId = "liff-user";
+      }
+    } else {
+      liff.login();
+    }
+
   } catch (e) {
-    console.log("LIFF失敗", e);
+    console.log("LIFF init fail", e);
   }
 }
 
-function testClick(type) {
-  alert("按鈕有反應：" + type);
-  console.log("click:", type);
+async function clock(type) {
+
+  alert("按鈕OK：" + type);
+
+  let pos = { lat: 0, lng: 0 };
+
+  try {
+    pos = await getLocation();
+  } catch (e) {
+    console.log("GPS失敗");
+  }
+
+  const url = "https://script.google.com/macros/s/AKfycbxNnNisdR52F_Xj3jdjW4ZiEJtrT5-faoA96oUe6vderRcBFhSF3Ziq0ETk5_QO-YM3DQ/exec";
+
+  const params = new URLSearchParams({
+    userId: userId,
+    name: "user",
+    type: type,
+    lat: pos.lat,
+    lng: pos.lng
+  });
+
+  alert("送出中...");
+
+  fetch(url + "?" + params.toString(), {
+    method: "GET"
+  })
+  .then(r => r.text())
+  .then(text => {
+    console.log("GAS回應:", text);
+    return JSON.parse(text);
+  })
+  .then(res => alert(res.msg))
+  .catch(err => alert("錯誤：" + err));
+}
+
+function getLocation() {
+  return new Promise((resolve) => {
+    navigator.geolocation.getCurrentPosition(pos => {
+      resolve({
+        lat: pos.coords.latitude,
+        lng: pos.coords.longitude
+      });
+    }, () => {
+      resolve({ lat: 0, lng: 0 });
+    });
+  });
 }
 
 init();
