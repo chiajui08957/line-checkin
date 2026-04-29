@@ -7,45 +7,46 @@
 </head>
 
 <body>
-<h2>GPS 打卡系統</h2>
+
+<h2>打卡系統</h2>
 
 <button onclick="clock('上班')">上班</button>
 <button onclick="clock('下班')">下班</button>
 
 <script>
+
 async function init() {
   await liff.init({ liffId: "2009933192-9PJMT56a" });
 
   if (!liff.isLoggedIn()) {
     liff.login();
+    return;
   }
 }
 
 async function clock(type) {
+
   const pos = await getLocation();
 
   const profile = await liff.getProfile();
+  const userId = liff.getContext().userId;
 
-  const data = {
-    userId: profile.userId,
-    name: profile.displayName,
-    type: type,
-    lat: pos.lat,
-    lng: pos.lng
-  };
-
-  fetch("https://script.google.com/macros/s/AKfycbwnzERCGk28Esa6BryjHUKH34dxLD-bBRkocP9TAkJ_VLfAmMm8MUto06SWMwsXxSso/exec", {
+  fetch("你的GAS /exec URL", {
     method: "POST",
-    body: JSON.stringify(data)
+    body: JSON.stringify({
+      userId: userId,
+      name: profile.displayName,
+      type: type,
+      lat: pos.lat,
+      lng: pos.lng
+    })
   })
-  .then(res => res.json())
-  .then(res => {
-    alert(res.msg);
-  });
+  .then(r => r.json())
+  .then(res => alert(res.msg));
 }
 
 function getLocation() {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     navigator.geolocation.getCurrentPosition(pos => {
       resolve({
         lat: pos.coords.latitude,
@@ -56,6 +57,8 @@ function getLocation() {
 }
 
 init();
+
 </script>
+
 </body>
 </html>
