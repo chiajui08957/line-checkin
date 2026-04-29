@@ -41,12 +41,9 @@ async function clock(type) {
     lng: pos.lng
   };
 
-  fetch("你的GAS /exec", {
+  fetch("https://script.google.com/macros/s/AKfycbxzqndus7dBGMHwYtfuyb1eJjdLLTL6cJMOAXhg9QJeFGlFUFSns5QFB8bukJnW7zsFpw/exec", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(data)
+    body: new URLSearchParams(data)
   })
   .then(r => r.json())
   .then(res => alert(res.msg))
