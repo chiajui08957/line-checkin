@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h2>LINE 打卡系統</h2>
+
+<button onclick="checkIn('上班')">上班打卡</button>
+<button onclick="checkIn('下班')">下班打卡</button>
+
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+
+<script>
+async function checkIn(type) {
+  await liff.init({ liffId: "2009933192" });
+
+  navigator.geolocation.getCurrentPosition(function(pos) {
+    fetch("https://script.google.com/macros/s/AKfycbyoourQDeoJkDf8MyLiHN6MMW68Y7Ic3puWoynPf8mc6cI734cpDS8DkzpqzoXg9DB-bQ/exec", {
+      method: "POST",
+      body: JSON.stringify({
+        type: type,
+        lat: pos.coords.latitude,
+        lng: pos.coords.longitude
+      })
+    });
+
+    alert("打卡完成");
+  });
+}
+</script>
+
+</body>
+</html>
