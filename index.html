@@ -42,19 +42,19 @@ async function clock(type) {
   };
 
   fetch("https://script.google.com/macros/s/AKfycbx63X_CIK1pZ2-UE3J5tkQPQy_W2ndAwmJ4MhmvnN9n1M95RCpJ2GL8VVvJfCbFkyUvAA/exec", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(data)
-  })
-  .then(async r => {
-    const text = await r.text();
-    console.log("GAS回應:", text);
-    return JSON.parse(text);
-  })
-  .then(res => alert(res.msg))
-  .catch(err => alert("錯誤：" + err));
+  method: "POST",
+  headers: {
+    "Content-Type": "text/plain"
+  },
+  body: JSON.stringify(data)
+})
+.then(async r => {
+  const text = await r.text();
+  console.log("GAS回應:", text);
+  return JSON.parse(text);
+})
+.then(res => alert(res.msg))
+.catch(err => alert("錯誤：" + err));
 }
 
 function getLocation() {
