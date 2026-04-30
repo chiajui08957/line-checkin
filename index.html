@@ -3,6 +3,50 @@
 <head>
 <meta charset="utf-8">
 <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+</head>
+<body>
+
+<button onclick="go('上班')">上班</button>
+<button onclick="go('下班')">下班</button>
+
+<script>
+const LIFF_ID = "2009933192-9PJMT56a";
+
+liff.init({ liffId: LIFF_ID }).then(() => {
+  if (!liff.isLoggedIn()) liff.login();
+});
+
+async function go(action) {
+  const profile = await liff.getProfile();
+
+  navigator.geolocation.getCurrentPosition(async pos => {
+    const lat = pos.coords.latitude;
+    const lng = pos.coords.longitude;
+
+    const ip = await fetch('https://api.ipify.org?format=json')
+      .then(r=>r.json()).then(d=>d.ip);
+
+    const res = await fetch("https://script.google.com/macros/s/AKfycbzt3eeqOJ6dFTCzsM1NHBHUO1JkRXxCgqJSy3xquxxyUKMZZTbORlCvXLa1g5kx616DrA/exec", {
+      method: "POST",
+      body: JSON.stringify({
+        action: "checkin",
+        userId: profile.userId,
+        lat: lat,
+        lng: lng,
+        action: action,
+        ip: ip
+      })
+    });
+
+    const result = await res.json();
+    alert(result.msg);
+
+  }, () => {
+    alert("GPS取得失敗");
+  });
+}
+</script>
+
 <style>
 button {
   width: 85%;
@@ -16,50 +60,6 @@ button {
   color: white;
 }
 </style>
-</head>
-
-<body>
-
-<button onclick="checkin('上班')">上班打卡</button>
-<button onclick="checkin('下班')">下班打卡</button>
-
-<script>
-let userId="";
-
-async function init(){
-  await liff.init({ liffId: "2009933192-9PJMT56a" });
-
-  if(!liff.isLoggedIn()){
-    liff.login();
-  }
-
-  const profile = await liff.getProfile();
-  userId = profile.userId;
-}
-
-async function checkin(type){
-  navigator.geolocation.getCurrentPosition(async pos=>{
-    const lat = pos.coords.latitude;
-    const lng = pos.coords.longitude;
-
-    const url = "https://script.google.com/macros/s/AKfycbxiA8ZNEjF_3J6XuueZayJwg2OoKTy2o6OcMYG6vuT4S0RuAkCV7a8YNWuX8U4_FZj4qw/exec"
-      + "?userId="+userId
-      + "&action="+type
-      + "&lat="+lat
-      + "&lng="+lng;
-
-    const res = await fetch(url);
-    const text = await res.text();
-
-    alert(text);
-
-  },()=>{
-    alert("無法取得GPS");
-  });
-}
-
-init();
-</script>
 
 </body>
 </html>
