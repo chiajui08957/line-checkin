@@ -2,19 +2,8 @@
 <html>
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>打卡系統</title>
-
 <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-
 <style>
-body {
-  margin: 0;
-  font-family: Arial;
-  text-align: center;
-  background: #f5f5f5;
-}
-
 button {
   width: 85%;
   max-width: 320px;
@@ -31,85 +20,45 @@ button {
 
 <body>
 
-<h2>打卡系統</h2>
-
-<button onclick="clock('上班')">上班</button>
-<button onclick="clock('下班')">下班</button>
+<button onclick="checkin('上班')">上班打卡</button>
+<button onclick="checkin('下班')">下班打卡</button>
 
 <script>
+let userId="";
 
-let userId = "web-user";
+async function init(){
+  await liff.init({ liffId: "2009933192-9PJMT56a" });
 
-async function init() {
-  try {
-    await liff.init({ liffId: "2009933192-9PJMT56a" });
-
-    if (liff.isLoggedIn()) {
-      try {
-        userId = liff.getContext()?.userId || "liff-user";
-      } catch (e) {
-        userId = "liff-user";
-      }
-    } else {
-      liff.login();
-    }
-
-  } catch (e) {
-    console.log("LIFF init fail", e);
-  }
-}
-
-async function clock(type) {
-
-  alert("按鈕OK：" + type);
-
-  let pos = { lat: 0, lng: 0 };
-
-  try {
-    pos = await getLocation();
-  } catch (e) {
-    console.log("GPS失敗");
+  if(!liff.isLoggedIn()){
+    liff.login();
   }
 
-  const url = "https://script.google.com/macros/s/AKfycbxNnNisdR52F_Xj3jdjW4ZiEJtrT5-faoA96oUe6vderRcBFhSF3Ziq0ETk5_QO-YM3DQ/exec";
-
-  const params = new URLSearchParams({
-    userId: userId,
-    name: "user",
-    type: type,
-    lat: pos.lat,
-    lng: pos.lng
-  });
-
-  alert("送出中...");
-
-  fetch(url + "?" + params.toString(), {
-    method: "GET"
-  })
-  .then(r => r.text())
-  .then(text => {
-    console.log("GAS回應:", text);
-    return JSON.parse(text);
-  })
-  .then(res => alert(res.msg))
-  .catch(err => alert("錯誤：" + err));
+  const profile = await liff.getProfile();
+  userId = profile.userId;
 }
 
-function getLocation() {
-  return new Promise((resolve) => {
-    navigator.geolocation.getCurrentPosition(pos => {
-      resolve({
-        lat: pos.coords.latitude,
-        lng: pos.coords.longitude
-      });
-    }, () => {
-      resolve({ lat: 0, lng: 0 });
-    });
+async function checkin(type){
+  navigator.geolocation.getCurrentPosition(async pos=>{
+    const lat = pos.coords.latitude;
+    const lng = pos.coords.longitude;
+
+    const url = "https://script.google.com/macros/s/AKfycbxiA8ZNEjF_3J6XuueZayJwg2OoKTy2o6OcMYG6vuT4S0RuAkCV7a8YNWuX8U4_FZj4qw/exec"
+      + "?userId="+userId
+      + "&action="+type
+      + "&lat="+lat
+      + "&lng="+lng;
+
+    const res = await fetch(url);
+    const text = await res.text();
+
+    alert(text);
+
+  },()=>{
+    alert("無法取得GPS");
   });
 }
 
 init();
-
 </script>
 
 </body>
