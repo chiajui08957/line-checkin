@@ -26,7 +26,7 @@ async function go(action) {
     const ip = await fetch('https://api.ipify.org?format=json')
       .then(r=>r.json()).then(d=>d.ip);
 
-    const res = await fetch("https://script.google.com/macros/s/AKfycbzt3eeqOJ6dFTCzsM1NHBHUO1JkRXxCgqJSy3xquxxyUKMZZTbORlCvXLa1g5kx616DrA/exec", {
+    const res = await fetch("https://script.google.com/macros/s/AKfycbw3M5TbYjPrN8Uo7SmygKQa2fm2_pc5CNHgDqQ8tcCSlXjK-0VqIUxERf-QbPfqQDPFVg/exec", {
       method: "POST",
       body: JSON.stringify({
         action: "checkin",
